@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: portal_db
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=secretpassword
+      - POSTGRES_DB=portal_dataspace
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./api
+    container_name: portal_backend
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api:/app
+    environment:
+      - DATABASE_URL=postgresql://admin:secretpassword@db:5432/portal_dataspace
+      - SECRET_KEY=supersecretkey123
+      - ALGORITHM=HS256
+      - ENCRYPTION_KEY=Mixdae7wZJO-3tXGqyLaZ5a4iJj-d5q3yF4yQzZ7qK8=
+
+volumes:
+  postgres_data:
