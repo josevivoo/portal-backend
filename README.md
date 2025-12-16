@@ -15,7 +15,7 @@ Desde la carpeta raíz portal-backend:
 3. Usuario Administrador por Defecto:  
    El sistema crea automáticamente este usuario al iniciar si la DB está vacía:  
    * **Email:** admin@dataspace.com  
-   * **Password:** adminpassword
+   * **Password:** adminpass
 
 ## **🔌 2\. Catálogo de Endpoints Implementados**
 
