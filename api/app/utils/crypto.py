@@ -2,11 +2,16 @@ from cryptography.fernet import Fernet
 import os
 import base64
 
-# En producción, esto debe ser una variable de entorno persistente
-# Generamos una key fija temporalmente para que no cambie al reiniciar el contenedor
-SECRET_KEY = os.getenv("ENCRYPTION_KEY", Fernet.generate_key().decode())
+# LEER DEL ENTORNO
+ENCRYPTION_KEY = os.getenv("ENCRYPTION_KEY")
 
-cipher_suite = Fernet(SECRET_KEY.encode() if isinstance(SECRET_KEY, str) else SECRET_KEY)
+if not ENCRYPTION_KEY:
+    raise ValueError("FATAL: ENCRYPTION_KEY no está configurada en las variables de entorno.")
+
+try:
+    cipher_suite = Fernet(ENCRYPTION_KEY.encode())
+except Exception as e:
+    raise ValueError(f"FATAL: ENCRYPTION_KEY inválida. Asegúrate de que es una clave Fernet válida (32 bytes base64). Error: {e}")
 
 def encrypt_value(value: str) -> str:
     """Cifra un string y devuelve el hash en string"""
@@ -18,4 +23,8 @@ def decrypt_value(hashed_value: str) -> str:
     """Descifra un hash y devuelve el string original"""
     if not hashed_value:
         return None
-    return cipher_suite.decrypt(hashed_value.encode()).decode()
+    try:
+        return cipher_suite.decrypt(hashed_value.encode()).decode()
+    except Exception:
+        # Es buena práctica manejar errores de descifrado (ej. clave incorrecta o datos corruptos)
+        return None

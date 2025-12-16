@@ -6,9 +6,10 @@ services:
     container_name: portal_db
     restart: always
     environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=secretpassword
-      - POSTGRES_DB=portal_dataspace
+      # Ahora lee del .env
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
@@ -25,10 +26,18 @@ services:
     volumes:
       - ./api:/app
     environment:
-      - DATABASE_URL=postgresql://admin:secretpassword@db:5432/portal_dataspace
-      - SECRET_KEY=supersecretkey123
-      - ALGORITHM=HS256
-      - ENCRYPTION_KEY=Mixdae7wZJO-3tXGqyLaZ5a4iJj-d5q3yF4yQzZ7qK8=
+      # CONSTRUIMOS LA URL DINÁMICAMENTE PARA DOCKER
+      # Usamos el servicio "db" en lugar de localhost
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+
+      # Variables de seguridad leídas del .env
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+
+      # Credenciales para el Admin inicial
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
 
 volumes:
   postgres_data:

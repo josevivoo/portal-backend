@@ -1,5 +1,7 @@
 # **📘 Guía de Uso \- Backend Portal** 
 
+Este servicio opera como la autoridad central de gestión y seguridad para el Espacio de Datos, diseñado para formalizar el registro de nuevos participantes exclusivamente mediante un flujo de invitación administrativa. Su arquitectura cumple una doble función crítica de seguridad: primero, autentica a los usuarios en el portal de gestión mediante la emisión de Tokens JWT tras un inicio de sesión validado; y segundo, protege la infraestructura (conector e identity hub) asignando claves API Keys cifradas, garantizando así que solo los propietarios legítimos puedan operar su infraestructura de datos.
+
 ## **🚀 1\. Cómo Ejecutar el Proyecto**
 
 Desde la carpeta raíz portal-backend:

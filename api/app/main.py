@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from .database import engine, Base, get_db, SessionLocal
@@ -9,7 +10,6 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Dataspace Portal Backend")
 
-# Incluir el router de autenticación
 app.include_router(auth.router)
 app.include_router(admin.router)
 app.include_router(participant.router)
@@ -19,16 +19,24 @@ app.include_router(participant.router)
 def create_initial_admin():
     db = SessionLocal()
     try:
-        # Verificamos si ya existe algún usuario
         existing_user = db.query(models.User).first()
         if not existing_user:
-            print("--- CREANDO ADMIN POR DEFECTO ---")
+            # LEER DEL ENTORNO (seguro)
+            admin_email = os.getenv("ADMIN_EMAIL")
+            admin_password = os.getenv("ADMIN_PASSWORD")
+
+            # Validación de seguridad: Si no hay variables, no creamos nada por defecto inseguro
+            if not admin_email or not admin_password:
+                print("⚠️  ADVERTENCIA: ADMIN_EMAIL o ADMIN_PASSWORD no configurados en .env. No se creó el admin.")
+                return
+
+            print("--- CREANDO ADMIN DESDE VARIABLES DE ENTORNO ---")
             admin_data = schemas.UserCreate(
-                email="admin@dataspace.com",
-                password="adminpassword"
+                email=admin_email,
+                password=admin_password
             )
             crud.create_user(db, admin_data, role=models.UserRole.ADMIN)
-            print("--- ADMIN CREADO: admin@dataspace.com / adminpassword ---")
+            print(f"--- ADMIN CREADO: {admin_email} ---")
     finally:
         db.close()
 
