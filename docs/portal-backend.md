@@ -61,6 +61,16 @@ Estas funciones son invocadas internamente o por el administrador para gestionar
 * Deploy Identity hub: Orquestación para levantar el contenedor o servicio del Identity Hub.  
 * Deploy conector: Orquestación para levantar el conector del Dataspace.
 
+### **Seguridad y Criptografía**
+
+| Categoría | Dato Protegido | Algoritmo | Propiedad | Archivo Fuente |
+| :---- | :---- | :---- | :---- | :---- |
+| **Autenticación** | Password Usuario | **Bcrypt** | Irreversible | security.py |
+| **Integridad** | Token Sesión (JWT) | **HS256** | Firma Simétrica | security.py |
+| **Confidencialidad** | API Keys Conector | **Fernet (AES-128)** | Reversible | crypto.py |
+
+
+
 ### **Credenciales e Identidad**
 
 Funciones específicas para la gestión de la identidad soberana.
